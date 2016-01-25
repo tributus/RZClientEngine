@@ -6,12 +6,20 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/tributus/RZClientEngine.git"
+  },
   "keywords": [
     "rutezangada"
   ],
   "author": "Anderson Noberto Santos",
   "license": "MIT",
   "devDependencies": {
-    "grunt": "^0.4.5"
+    "grunt": "^0.4.5",
+    "grunt-contrib-concat": "^0.5.1",
+    "grunt-contrib-copy": "^0.8.2",
+    "grunt-contrib-jasmine": "^0.9.2",
+    "grunt-contrib-uglify": "^0.11.0"
   }
 }
