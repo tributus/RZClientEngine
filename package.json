@@ -1,0 +1,17 @@
+{
+  "name": "RZClientEngine",
+  "version": "0.0.1",
+  "description": "Mecanismo de interface do usuário da plataforma RuteZangada.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "rutezangada"
+  ],
+  "author": "Anderson Noberto Santos",
+  "license": "MIT",
+  "devDependencies": {
+    "grunt": "^0.4.5"
+  }
+}

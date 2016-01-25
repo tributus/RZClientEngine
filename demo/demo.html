@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script type="text/javascript" src="../lib/jquery-2.1.4.min.js"></script>
+
+    <script src="../src/NamespaceDeclares.js"></script>
+    <script src="../src/RuteZangada.js"></script>
+    <script src="../src/WidgetEngine.js"></script>
+</head>
+<body>
+<div id="targetEl"></div>
+<button id="bt1">Clique aqui</button>
+</body>
+<script>
+    //Widget creation
+    var demoWidget = ruteZangada.widget("DemoWidget",["sayHello",{name:"complexDefinitionMethod", description:"Teste de método com definição complexa"}],["helloSayed"],function () {
+        var $this = this;
+        this.initialize = function (params, initialized) {
+            params = params || {};
+            params.message = params.message || "Hello World";
+            initialized(params);
+        };
+
+        this.render = function (target, params) {
+            $(target).html('<h1>*</h1><br>'.replace("*",params.message));
+        };
+        this.sayHello = function(){
+            alert("hello 2 u");
+            $this.raiseEvent("helloSayed",undefined,$this);
+        }
+    });
+
+
+    //Widget Execution
+    var instance = ruteZangada.renderWidget("DemoWidget","#targetEl");
+    instance.on("helloSayed", function (sender,e) {
+        console.warn("hello sayed from ",sender,"with", e, "args");
+    });
+
+    $("#bt1").click(function(){
+        instance.sayHello();
+    });
+</script>
+</html>
