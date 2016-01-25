@@ -1,5 +1,5 @@
 #RZClientEngine
-RuteZangada Platform user interface engine 
+Core ui library for RuteZangada Platform. 
 
 ##Overview
 This component contains core functionality and provides the "ruteZangada" object who centralizes all *client side* features for rzPlatform. 
