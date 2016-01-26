@@ -18,7 +18,13 @@
     "node_modules",
     "bower_components",
     "test",
-    "tests"
+    "tests",
+    "src",
+    "demo",
+    ".gitignore",
+    "bower.json",
+    "gruntfile.js",
+    "package.json"
   ],
   "devDependencies": {
     "jquery": "~2.2.0"
