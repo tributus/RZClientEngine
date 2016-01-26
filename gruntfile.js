@@ -5,6 +5,7 @@ module.exports = function (grunt) {
     grunt.initConfig({
             options: {
                 srcFiles: [
+                    "src/Polyfills.js",
                     "src/utils.js",
                     "src/NamespaceDeclares.js",
                     "src/RuteZangada.js",
