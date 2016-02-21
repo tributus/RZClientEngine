@@ -9,7 +9,8 @@ module.exports = function (grunt) {
                     "src/utils.js",
                     "src/NamespaceDeclares.js",
                     "src/RuteZangada.js",
-                    "src/WidgetEngine.js"
+                    "src/WidgetEngine.js",
+                    "src/plugins/jsonFilterEngine.js"
                 ],
                 libs: [
                     "bower_components/jquery/dist/jquery.min.js"
