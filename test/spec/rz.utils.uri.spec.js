@@ -77,6 +77,13 @@ describe("rz.utils.uri tests", function() {
     it("returns UNDEFINED for a nonexistent param in url without params", function () {
         expect(rz.utils.uri.getParamValue("http://www.norberto.net.br","group")).toEqual(undefined);
     });
-
-
+    it("merge a param into url without params", function () {
+        expect(rz.utils.uri.mergeParam("http://www.norberto.net.br","group","g1")).toEqual("http://www.norberto.net.br?group=g1");
+    });
+    it("merge a param into url without params", function () {
+        expect(rz.utils.uri.mergeParam("http://www.norberto.net.br","group","g1")).toEqual("http://www.norberto.net.br?group=g1");
+    });
+    it("merge a param into url with params", function () {
+        expect(rz.utils.uri.mergeParam("http://www.norberto.net.br?group=g1","section","s1")).toEqual("http://www.norberto.net.br?group=g1&section=s1");
+    });
 });
