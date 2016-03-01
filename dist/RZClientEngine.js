@@ -393,6 +393,15 @@ rz.utils.uri = {
         else{
             return undefined;
         }
+    },
+    mergeParam: function (url, p, v) {
+        var paramWithValue =p + '=' + v;
+        if(this.getParamList(url).length>0){
+            return url + '&' + paramWithValue;
+        }
+        else{
+            return url + '?' + paramWithValue;
+        }
     }
 };
 /**
