@@ -137,10 +137,11 @@ function generateRandomID(size) {
 /**
  * Created by anderson.santos on 08/01/2016.
  */
-var rz = {};
-rz.engine = {};
-rz.widgets = {};
-rz.plugins = {};
+var rz      = {};
+rz.engine   = {};
+rz.widgets  = {};
+rz.plugins  = {};
+rz.utils    = {};
 
 /**
  * Created by anderson.santos on 08/01/2016.
@@ -359,6 +360,41 @@ ruteZangada.extend("getWidgetMethodsDescriptions", rz.engine.getWidgetMethodsDes
 ruteZangada.extend("getWidgetMethodsDescription", rz.engine.getWidgetMethodsDescriptionMethod);
 
 
+/**
+ * Created by Anderson on 26/02/2016.
+ */
+rz.utils.uri = {
+    getSearch : function(url){
+        var fploc = url.indexOf("?");
+        return (fploc==-1) ? "" : url.substring(fploc);
+    },
+    getParamCount : function(url){
+        var query = this.getSearch(url);
+        return (query.match(new RegExp(/[\?|&][a-zA-Z0-9+]+=([^&*]*)/g))||[]).length;
+    },
+    getParamList : function(url){
+        var query = this.getSearch(url);
+        var rawParams = query.match(new RegExp(/([\?|&][a-zA-Z0-9+]+=)/g))||[];
+        var oparams = [];
+        rawParams.forEach(function(it){
+            oparams.push(it.replace(/[?|&|=]/g,""));
+        });
+        return oparams;
+    },
+    hasParam : function(url,p){
+        var query = this.getSearch(url);
+        return (query.match(new RegExp('[?&]' + p + '=([^&]+)')) || [])[0] !==undefined;
+    },
+    getParamValue : function(url,p){
+        if(this.hasParam(url,p)){
+            var query = this.getSearch(url);
+            return ((query.match(new RegExp('[?&]' + p + '=([^&]+)')) || [])[0]||"").replace(/[?|&][a-zA-Z0-9*]+=/g,"");
+        }
+        else{
+            return undefined;
+        }
+    }
+};
 /**
  * Created by Anderson on 17/02/2016.
  */

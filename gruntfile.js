@@ -10,6 +10,7 @@ module.exports = function (grunt) {
                     "src/NamespaceDeclares.js",
                     "src/RuteZangada.js",
                     "src/WidgetEngine.js",
+                    "src/rz.utils.uri.js",
                     "src/plugins/jsonFilterEngine.js"
                 ],
                 libs: [
