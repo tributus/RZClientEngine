@@ -51,6 +51,7 @@ if (!Array.prototype.findIndex) {
 }
 /**
  * Created by Anderson on 12/01/2016.
+ * Esta biblioteca contém código utilizado pelo core engine (diferente dos helpers que contém código do core, utilizado pelos widgets)
  */
 function StringBuilder() {
     var strings = [];
@@ -134,10 +135,6 @@ function generateRandomID(size) {
 
     return id;
 }
-
-rz.utils.ensureFunction = function(f){
-    return (f===undefined) ? function(){}:f;
-};
 /**
  * Created by anderson.santos on 08/01/2016.
  */
@@ -146,7 +143,15 @@ rz.engine   = {};
 rz.widgets  = {};
 rz.plugins  = {};
 rz.utils    = {};
-
+rz.helpers  = {};
+/**
+ * Created by anderson.santos on 08/06/2016.
+ */
+rz.helpers.StringBuilder = StringBuilder;
+rz.helpers.generateRandomID = generateRandomID;
+rz.helpers.ensureFunction = function(f){
+    return (f===undefined) ? function(){}:f;
+};
 /**
  * Created by anderson.santos on 08/01/2016.
  */
