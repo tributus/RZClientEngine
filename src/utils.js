@@ -1,5 +1,6 @@
 /**
  * Created by Anderson on 12/01/2016.
+ * Esta biblioteca contém código utilizado pelo core engine (diferente dos helpers que contém código do core, utilizado pelos widgets)
  */
 function StringBuilder() {
     var strings = [];
@@ -83,7 +84,3 @@ function generateRandomID(size) {
 
     return id;
 }
-
-rz.utils.ensureFunction = function(f){
-    return (f===undefined) ? function(){}:f;
-};

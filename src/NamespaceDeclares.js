@@ -6,3 +6,4 @@ rz.engine   = {};
 rz.widgets  = {};
 rz.plugins  = {};
 rz.utils    = {};
+rz.helpers  = {};

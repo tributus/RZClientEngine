@@ -8,6 +8,7 @@ module.exports = function (grunt) {
                     "src/Polyfills.js",
                     "src/utils.js",
                     "src/NamespaceDeclares.js",
+                    "src/helpers.js",
                     "src/RuteZangada.js",
                     "src/WidgetEngine.js",
                     "src/rz.utils.uri.js",
