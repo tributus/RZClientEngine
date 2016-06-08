@@ -83,3 +83,7 @@ function generateRandomID(size) {
 
     return id;
 }
+
+rz.helpers.ensureFunction = function(f){
+    return (f===undefined) ? function(){}:f;
+};
