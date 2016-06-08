@@ -134,6 +134,10 @@ function generateRandomID(size) {
 
     return id;
 }
+
+rz.utils.ensureFunction = function(f){
+    return (f===undefined) ? function(){}:f;
+};
 /**
  * Created by anderson.santos on 08/01/2016.
  */
