@@ -1,4 +1,55 @@
 /**
+ * Created by Anderson on 25/01/2016.
+ */
+
+//Array.find()
+if (!Array.prototype.find) {
+    Array.prototype.find = function(predicate) {
+        if (this === null) {
+            throw new TypeError('Array.prototype.find called on null or undefined');
+        }
+        if (typeof predicate !== 'function') {
+            throw new TypeError('predicate must be a function');
+        }
+        var list = Object(this);
+        var length = list.length >>> 0;
+        var thisArg = arguments[1];
+        var value;
+
+        for (var i = 0; i < length; i++) {
+            value = list[i];
+            if (predicate.call(thisArg, value, i, list)) {
+                return value;
+            }
+        }
+        return undefined;
+    };
+}
+
+//Array.findIndex();
+if (!Array.prototype.findIndex) {
+    Array.prototype.findIndex = function(predicate) {
+        if (this === null) {
+            throw new TypeError('Array.prototype.findIndex called on null or undefined');
+        }
+        if (typeof predicate !== 'function') {
+            throw new TypeError('predicate must be a function');
+        }
+        var list = Object(this);
+        var length = list.length >>> 0;
+        var thisArg = arguments[1];
+        var value;
+
+        for (var i = 0; i < length; i++) {
+            value = list[i];
+            if (predicate.call(thisArg, value, i, list)) {
+                return i;
+            }
+        }
+        return -1;
+    };
+}
+/**
  * Created by Anderson on 12/01/2016.
  */
 function StringBuilder() {
@@ -86,10 +137,11 @@ function generateRandomID(size) {
 /**
  * Created by anderson.santos on 08/01/2016.
  */
-var rz = {};
-rz.engine = {};
-rz.widgets = {};
-rz.plugins = {};
+var rz      = {};
+rz.engine   = {};
+rz.widgets  = {};
+rz.plugins  = {};
+rz.utils    = {};
 
 /**
  * Created by anderson.santos on 08/01/2016.
@@ -307,3 +359,136 @@ ruteZangada.extend("getWidgetEventHandlersDescription", rz.engine.getWidgetEvent
 ruteZangada.extend("getWidgetMethodsDescriptions", rz.engine.getWidgetMethodsDescriptionsMethod);
 ruteZangada.extend("getWidgetMethodsDescription", rz.engine.getWidgetMethodsDescriptionMethod);
 
+
+/**
+ * Created by Anderson on 26/02/2016.
+ */
+rz.utils.uri = {
+    getSearch : function(url){
+        var fploc = url.indexOf("?");
+        return (fploc==-1) ? "" : url.substring(fploc);
+    },
+    getParamCount : function(url){
+        var query = this.getSearch(url);
+        return (query.match(new RegExp(/[\?|&][a-zA-Z0-9+]+=([^&*]*)/g))||[]).length;
+    },
+    getParamList : function(url){
+        var query = this.getSearch(url);
+        var rawParams = query.match(new RegExp(/([\?|&][a-zA-Z0-9+]+=)/g))||[];
+        var oparams = [];
+        rawParams.forEach(function(it){
+            oparams.push(it.replace(/[?|&|=]/g,""));
+        });
+        return oparams;
+    },
+    hasParam : function(url,p){
+        var query = this.getSearch(url);
+        return (query.match(new RegExp('[?&]' + p + '=([^&]+)')) || [])[0] !==undefined;
+    },
+    getParamValue : function(url,p){
+        if(this.hasParam(url,p)){
+            var query = this.getSearch(url);
+            return ((query.match(new RegExp('[?&]' + p + '=([^&]+)')) || [])[0]||"").replace(/[?|&][a-zA-Z0-9*]+=/g,"");
+        }
+        else{
+            return undefined;
+        }
+    },
+    mergeParam: function (url, p, v) {
+        var paramWithValue =p + '=' + v;
+        if(this.getParamList(url).length>0){
+            return url + '&' + paramWithValue;
+        }
+        else{
+            return url + '?' + paramWithValue;
+        }
+    }
+};
+/**
+ * Created by Anderson on 17/02/2016.
+ */
+rz.plugins.jsonFilterEngine = function (opt) {
+    var getConnector = function (condition) {
+        if(condition.connector===undefined){
+            return "&&";
+        }
+        else{
+            switch(condition.connector.toLocaleLowerCase()){
+                case "and": return " && ";
+                case "or": return " || ";
+                case "and not": return " && !";
+                case "or not": return " || !";
+                default: return " && ";
+            }
+        }
+
+    };
+
+    var getOperator = function (condition) {
+        if(condition.operator==undefined){
+            return "===";
+        }
+        else{
+            switch (condition.operator.toLowerCase()){
+                case "equals":
+                case "=":
+                case "==":
+                case "===": return "===@";
+                case "notequas":
+                case "<>":
+                case "!=":
+                case "!==":return "!==@";
+                case "gt":
+                case ">":
+                case "greaterthan": return " > @";
+                case "lt":
+                case "<":
+                case "lessthan": return " < @";
+                case "gte":
+                case ">=":
+                case "greaterthanorequal": return " >= @";
+                case "lte":
+                case "<=":
+                case "lessthanorequal": return " >= @";
+                case "startswith":
+                case "::=": return ".startsWith(@)";
+                case "endswith":
+                case "=::": return ".endsWith(@)";
+                case "contains":
+                case ":=:": return ".indexOf(@)!=-1";
+                default: return condition.operator;
+            }
+        }
+    };
+
+    this.json2filterFunction = function (filterExpression) {
+        var filterString = '';
+        var processNodes = function (nodelist) {
+            var blockStart = true;
+            nodelist.forEach(function (item) {
+                if(!blockStart){
+                    filterString += getConnector(item);
+                }
+                else{
+                    blockStart = false;
+                }
+                if(item.conditions === undefined){
+                    filterString += "m."+item.field + getOperator(item).replace("@",item.value);
+                }
+                else{
+                    filterString += '(';
+                    processNodes(item.conditions);
+                    filterString += ')';
+                }
+            });
+        };
+        processNodes(filterExpression);
+        return filterString;
+    };
+
+    this.buildFilterFunction = function (filterExpression) {
+        var expressionString = this.json2filterFunction(filterExpression);
+        var r = function(m){return eval(expressionString);};
+        return r;
+    }
+};

@@ -3,8 +3,7 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title></title>
-    <script type="text/javascript" src="../lib/jquery-2.1.4.min.js"></script>
-
+    <script type="text/javascript" src="../bower_components/jquery/dist/jquery.min.js"></script>
     <script src="../src/NamespaceDeclares.js"></script>
     <script src="../src/RuteZangada.js"></script>
     <script src="../src/WidgetEngine.js"></script>
@@ -15,7 +14,7 @@
 </body>
 <script>
     //Widget creation
-    var demoWidget = ruteZangada.widget("DemoWidget",["sayHello",{name:"complexDefinitionMethod", description:"Teste de método com definição complexa"}],["helloSayed"],function () {
+    var demoWidget = ruteZangada.widget("DemoWidget",["sayHello",{name:"complexDefinitionMethod", description:"complex definition method"}],["helloSaid"],function () {
         var $this = this;
         this.initialize = function (params, initialized) {
             params = params || {};
@@ -27,16 +26,16 @@
             $(target).html('<h1>*</h1><br>'.replace("*",params.message));
         };
         this.sayHello = function(){
-            alert("hello 2 u");
-            $this.raiseEvent("helloSayed",undefined,$this);
+            alert("hello");
+            $this.raiseEvent("helloSaid",undefined,$this);
         }
     });
 
 
     //Widget Execution
     var instance = ruteZangada.renderWidget("DemoWidget","#targetEl");
-    instance.on("helloSayed", function (sender,e) {
-        console.warn("hello sayed from ",sender,"with", e, "args");
+    instance.on("helloSaid", function (sender,e) {
+        console.warn("said hello from ",sender,"with", e, "args");
     });
 
     $("#bt1").click(function(){

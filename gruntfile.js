@@ -5,10 +5,13 @@ module.exports = function (grunt) {
     grunt.initConfig({
             options: {
                 srcFiles: [
+                    "src/Polyfills.js",
                     "src/utils.js",
                     "src/NamespaceDeclares.js",
                     "src/RuteZangada.js",
-                    "src/WidgetEngine.js"
+                    "src/WidgetEngine.js",
+                    "src/rz.utils.uri.js",
+                    "src/plugins/jsonFilterEngine.js"
                 ],
                 libs: [
                     "bower_components/jquery/dist/jquery.min.js"

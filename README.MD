@@ -1,54 +1,58 @@
-#RZClientEngine 0.0.1
-Mecanismo de interface do usuário da plataforma RuteZangada.
+#RZClientEngine
+Core ui library for RuteZangada Platform. 
 
-##Visão geral
-Este componente disponibiliza o objeto "ruteZangada" que centraliza todas as funcionalidades *client side* da plataforma.
+##Overview
+This component contains core functionality and provides the "ruteZangada" object who centralizes all *client side* features for rzPlatform. 
 
-##Versões e funcionalidades
-###0.0.1
-- mecanismo de renderização de widgets
-- http get helper
+##Install
+Use bower to install this component:
 
-##Uso
-###mecanismo de renderização de widgets
-Este mecanismo cria e instancia (plota) widgets em elementos html
-Para criar um widget, use a seguinte sintaxe:
-
-```html
-var wiget = ruteZangada.widget("Nome",['lista','de','operacoes'], ['lista','de','eventos'],widgetBodyFunction);
-    );
+```
+bower install rutezangada-client-engine
 ```
 
-####lista de operações
-Esta lista define as operações que fazem parte da interface do widget. Para cada operação informada aqui é, criado um método público no widget. Este método deve ser sobrescrito no *widgetBodyFunction*. Caso ele não seja sobrescrito, uma exceção do tipo "not implemented" será disparada sempre que o método for invocado.
 
-####Exemplo:
+##Using
+###Widgets Render Engine
+This engine creates (definition) and instantiates (usage) widgets and render that (plot) into html elements. To create a widget, use the following sintax: 
+
+```html
+     var wiget = ruteZangada.widget("WidgetName",['operations','list'], ['events','list'],widgetBodyFunction);
+   );
+```
+
+####operations list
+This list defines the widget interface operations (public methods). A public method is created for each operation defined in this list. These methods would be overrided in *widgetBodyFunction*. If you not overrides a method, an "not implemented" exception will be thrown every time it is invoked;   
+
+####Example:
 
 ```html
 var op = ["setWidgetData","getWidgetData","clearData"]
-// ao criar o widget as operações setWidgetData(), getWidgetData() e clearData() serão automaticamente injetadas no mesmo 
+// when createing the widget, setWidgetData(), getWidgetData() and clearData() methods will be automatically injected;
 ```
 
-Opcionalmente, você pode utilizar o objeto do tipo *MethodInfo* para definir informações mais detalhadas sobre cada operação.
+Optionally, you can use the *MethodInfo* object model to define detailed information about each operation 
 
 ```html
 var op = [
-    {name:"nomeDaOperacao", description:"descrição da operação", friendlyName:"Nome amigável da operação",
+    {name:"OperationName", description:"detailed operation description", friendlyName:"operation friendly name",
         params:[
-            {name:"nomeParametro", friendlyName:"nome amigável do parâmetro",description:"descrição do parâmetro",type:"nome do tipo de dados do parâmetro"}
+            {name:"paramName", friendlyName:"param friendly name",description:"param desription",type:"param's type name"}
         ]
     },
 ]
 ```
 
-Ao utilizar este objeto, outras informações podem ser inclusas ao critério do desenvolvedor. A única propriedade obrigatória é a *"name"*.
+When using this object specification, you can add any other informations who judge relevant. The only mandatory property is *"name"* .
 
-Para recuperar informações sobre as operações do widget, você pode utilizar os métodos *getMethodDescriptors()*  ou *instance.getMethodDescriptor(n)* da instância do widget. 
 
-####lista de eventos
-É um array dos eventos que podem ser disparados pelo widget.
+To get widget operations information, you can use the *getMethodDescriptors()* or *\[instance\].getMethodDescriptor(n)* where \[instance\] is the widget instance pointer.  
+ 
 
-####Exemplo
+####events list
+An array of events who can handled by widget;
+
+####Example
 
 ```html
 var ev = ["after-save","before-load"];
@@ -57,12 +61,17 @@ var ev = ["after-save","before-load"];
 
 
 ###http get helper
-ruteZangada oferece um método para requisições http do tipo get. É recomendável o uso deste método para todas as requisições http get.
+ruteZangada offers a method to do GET http requests. We encourage that it be used for all http requests.
 
-####Exemplo
+####Exemple
 
 ```
 ruteZangada.get("http://url.com?param=1",function(data,status){
     ...
 });
 ```
+
+##Versions and features
+###0.0.1
+- Widgets Render Engine
+- http get helper
