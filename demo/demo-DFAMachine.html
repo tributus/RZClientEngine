@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="../dist/RZClientEngine-standalone.min.js"></script>
+</head>
+<body>
+
+</body>
+<script>
+    var extractPropertyTree = function (expression) {
+        //variables
+        var START_CHAR_PATTERN = /^[a-zA-Z_$ºª]$/;
+        var OPEN_ARRAY_PATTERN = /^\[$/;
+        var CLOSE_ARRAY_PATTERN = /^]$/;
+        var CHAR_OR_DIGIT_PATTERN = /^[a-zA-Z_$ºª]|[0-9]$/;
+        var DOT_PATTERN = /^\.$/;
+        var ONLY_DIGIT_PATTERN = /^[0-9]$/;
+        var DOUBLE_QUOTE_PATTERN = /^"$/;
+        var SINGLE_QUOTE_PATTERN = /^'$/;
+        var ANY_PATTERN = /^.$/;
+        var properties = [];
+        var currentProperty = "";
+
+        //helpers
+        var normalize = function () {
+            for (var i = 0; i < properties.length; i++) {
+                properties[i] = properties[i].replace(/(\["|\[')|("]|'])/g, "");
+            }
+        };
+        //parser
+        var dfa = new rz.plugins.DFAMachine(function (node, currentChar) {
+            switch (node) {
+                case "C":
+                    properties.push(currentProperty);
+                    currentProperty = "";
+                    break;
+                case "D":
+                    currentProperty += currentChar;
+                    break;
+                case "G":
+                case "K":
+                    if (currentProperty !== "" && currentProperty.substr(0, currentProperty.length - 1) !== "") {
+                        properties.push(currentProperty.substr(0, currentProperty.length - 1));
+                        currentProperty = "[" + currentChar;
+                    }
+                    else {
+                        currentProperty += currentChar;
+                    }
+                    break;
+                case "END":
+                    if (currentProperty !== "") properties.push(currentProperty);
+                    break;
+                default:
+                    currentProperty+=currentChar;
+                    break;
+
+            }
+        });
+        dfa.addNode("START", [{pattern: START_CHAR_PATTERN, node: "A"}, {pattern: OPEN_ARRAY_PATTERN, node: "J"}]);
+        dfa.addNode("A", [{pattern: CHAR_OR_DIGIT_PATTERN, node: "A"}, {pattern: OPEN_ARRAY_PATTERN,node: "D"}, {pattern: DOT_PATTERN, node: "C"},{node: "END"}]);
+        dfa.addNode("C", [{pattern: START_CHAR_PATTERN, node: "A"}]);
+        dfa.addNode("D", [{pattern: ONLY_DIGIT_PATTERN, node: "E"}, {pattern: CLOSE_ARRAY_PATTERN,node: "F"}, {pattern: DOUBLE_QUOTE_PATTERN, node: "G"},{pattern: SINGLE_QUOTE_PATTERN, node: "K"}]);
+        dfa.addNode("E", [{pattern: ONLY_DIGIT_PATTERN, node: "E"}, {pattern: CLOSE_ARRAY_PATTERN, node: "F"}]);
+        dfa.addNode("F", [{pattern: DOT_PATTERN, node: "C"}, {pattern: OPEN_ARRAY_PATTERN, node: "D"},{node:"END"}]);
+        dfa.addNode("G", [{pattern: DOUBLE_QUOTE_PATTERN, node: "ERROR"}, {pattern: ANY_PATTERN, node: "H"}]);
+        dfa.addNode("H", [{pattern: DOUBLE_QUOTE_PATTERN, node: "I"}, {pattern: ANY_PATTERN, node: "H"}]);
+        dfa.addNode("I", [{pattern: CLOSE_ARRAY_PATTERN, node: "F"}]);
+        dfa.addNode("J", [{pattern: DOUBLE_QUOTE_PATTERN, node: "G"}, {pattern: SINGLE_QUOTE_PATTERN, node: "K"}]);
+        dfa.addNode("K", [{pattern: SINGLE_QUOTE_PATTERN, node: "ERROR"}, {pattern: ANY_PATTERN, node: "L"}]);
+        dfa.addNode("L", [{pattern: SINGLE_QUOTE_PATTERN, node: "M"},{pattern: ANY_PATTERN, node: "L"}]);
+        dfa.addNode("M", [{pattern: CLOSE_ARRAY_PATTERN, node: "F"}]);
+        dfa.addNode("END");
+        dfa.start(expression);
+        normalize();
+        return properties;
+    };
+</script>
+</html>
