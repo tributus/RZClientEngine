@@ -185,7 +185,12 @@ rz.helpers.jsonUtils = {
                         }
                         else{
                             lastRef = lastRef[item];
-                            transverse(propArray[++pos]);
+                            if(lastRef===undefined){
+                                val = undefined;
+                            }
+                            else{
+                                transverse(propArray[++pos]);
+                            }
                         }
 
                     }
@@ -194,23 +199,46 @@ rz.helpers.jsonUtils = {
                         var name = parts[0];
                         var position = parts[1];
                         if(last){
-                            val = lastRef[name][position];
+                            if(lastRef[name]!==undefined){
+                                val = lastRef[name][position];
+                            }
+                            else{
+                                val = undefined;
+                            }
+
                         }
                         else{
-                            lastRef = lastRef[name][position];
-                            transverse(propArray[++pos]);
-                        }
+                            if(lastRef===undefined||lastRef[name]===undefined||lastRef[name][position]===undefined){
+                                val = undefined;
+                            }
+                            else{
+                                lastRef = lastRef[name][position];
+                                transverse(propArray[++pos]);
+                            }
 
+                        }
                     }
                     else if(propType=="dua"){
                         var name = item.replace("[]","");
-                        var position = lastRef[name].length -1;
+                        var position = (lastRef===undefined || lastRef[name]===undefined)? 0: lastRef[name].length -1;
                         if(last){
-                            val = lastRef[name][position];
+                            if(lastRef[name] !==undefined){
+                                val = lastRef[name][position];
+                            }
+                            else{
+                                val = undefined;
+                            }
                         }
                         else{
-                            lastRef = lastRef[name][position];
-                            transverse(propArray[++pos]);
+
+                            if(lastRef[name] !==undefined && lastRef[name][position] !=undefined){
+                                lastRef = lastRef[name][position];
+                                transverse(propArray[++pos]);
+                            }
+                            else{
+                                val = undefined;
+                            }
+
                         }
 
                     }
