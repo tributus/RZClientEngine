@@ -12,6 +12,7 @@ module.exports = function (grunt) {
                     "src/rz.helpers.jsonUtils.js",
                     "src/RuteZangada.js",
                     "src/WidgetEngine.js",
+                    "src/BehaviorsEngine.js",
                     "src/rz.utils.uri.js",
                     "src/plugins/jsonFilterEngine.js",
                     "src/plugins/DFAMachine.js"
