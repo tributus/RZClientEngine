@@ -45,6 +45,10 @@ rz.widgets.helpers = {
             });
         }
         eventData.definition.prototype.on = function (eventName, handler) {
+            if(eventData.definition.eventHandlers[eventName] === undefined){
+                eventData.definition.eventHandlers[eventName] = [];
+                console.warn("unknown eventhandler registered: " + eventName);
+            }
             try {
                 eventData.definition.eventHandlers[eventName].push(handler);
             }

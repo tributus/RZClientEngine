@@ -494,6 +494,10 @@ rz.widgets.helpers = {
             });
         }
         eventData.definition.prototype.on = function (eventName, handler) {
+            if(eventData.definition.eventHandlers[eventName] === undefined){
+                eventData.definition.eventHandlers[eventName] = [];
+                console.warn("unknown eventhandler registered: " + eventName);
+            }
             try {
                 eventData.definition.eventHandlers[eventName].push(handler);
             }
@@ -643,7 +647,7 @@ rz.engine.behaviorDefinitionMethod = function(n,m,d){
 
     var applyDefaulStructure = function(){
         d.prototype.initialize = function(){
-            throw "not implemented"
+            throw "initialize method is not implemented";
         };
         // d.prototype.setTrigger = function(trigger){
         //     //trigger: {name:"trigger-name",conditions:[{condition-list-or-method}]}
@@ -670,7 +674,7 @@ rz.engine.loadBehaviorMethod = function(name,params){
     if(behavior !==undefined){
         var bh = new behavior(params);
         bh.initialize();
-        return new bh;
+        return bh;
     }
     else{
         throw "behavior not registered"
