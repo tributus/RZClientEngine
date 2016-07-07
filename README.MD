@@ -8,7 +8,7 @@ This component contains core functionality and provides the "ruteZangada" object
 Use bower to install this component:
 
 ```
-bower install rutezangada-client-engine
+bower install rutezangada-clientengine
 ```
 
 
