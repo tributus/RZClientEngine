@@ -4,7 +4,7 @@
     "(Anderson Norberto Santos (andersonhtm@hotmail.com))"
   ],
   "description": "Mecanismo de interface do usuário da plataforma RuteZangada.",
-  "main": "dist/rzclientengine.min.js",
+  "main": "dist/rzclientengine.js",
   "moduleType": [
     "globals"
   ],
