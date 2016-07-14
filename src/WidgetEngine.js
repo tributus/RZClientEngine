@@ -47,13 +47,13 @@ rz.widgets.helpers = {
         eventData.definition.prototype.on = function (eventName, handler) {
             if(eventData.definition.eventHandlers[eventName] === undefined){
                 eventData.definition.eventHandlers[eventName] = [];
-                rz.helpers.log.warn("unknown eventhandler registered: " + eventName);
+                rz.instrumentation.log.warn("unknown eventhandler registered" ,{eventName:eventName, handler:handler});
             }
             try {
                 eventData.definition.eventHandlers[eventName].push(handler);
             }
             catch (e) {
-                throw ("invalid event handler");
+                rz.instrumentation.log.error("invalid event handler ",{eventName:eventName, handler:handler});
             }
         };
 
