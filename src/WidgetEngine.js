@@ -158,12 +158,12 @@ rz.engine.renderWidgetDefinitionMethod = function (w, t, d,p) {
                     var eventArgs = {cancel:false,params:pd,rd:renderData};
                     p(renderData,eventArgs,function(p){
                         if(!p.cancel){
-                            rz.engine.plot(p.rd);
+                            ruteZangada.plot(p.rd);
                         }
                     });
                 }
                 else{
-                    rz.engine.plot(renderData);
+                    ruteZangada.plot(renderData);
                 }
             }
         )};
