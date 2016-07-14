@@ -138,13 +138,14 @@ function generateRandomID(size) {
 /**
  * Created by anderson.santos on 08/01/2016.
  */
-var rz          = {};
-rz.engine       = {};
-rz.widgets      = {};
-rz.plugins      = {};
-rz.utils        = {};
-rz.helpers      = {};
-rz.behaviors    = {};
+var rz              = {};
+rz.engine           = {};
+rz.widgets          = {};
+rz.plugins          = {};
+rz.utils            = {};
+rz.helpers          = {};
+rz.behaviors        = {};
+rz.instrumentation  = {};
 /**
  * Created by anderson.santos on 08/06/2016.
  */
@@ -414,7 +415,15 @@ rz.helpers.jsonUtils = {
 /**
  * Created by anderson.santos on 14/07/2016.
  */
-rz.helpers.log = {
+rz.instrumentation.platformInfo = {
+    getPlatformVersion: function(){
+        return "0.6.0-ALPHA";
+    }
+};
+/**
+ * Created by anderson.santos on 14/07/2016.
+ */
+rz.instrumentation.log = {
     logListeners:[],
     registerListener:function(l){
         this.logListeners.push(l);

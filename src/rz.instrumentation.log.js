@@ -1,7 +1,7 @@
 /**
  * Created by anderson.santos on 14/07/2016.
  */
-rz.helpers.log = {
+rz.instrumentation.log = {
     logListeners:[],
     registerListener:function(l){
         this.logListeners.push(l);
