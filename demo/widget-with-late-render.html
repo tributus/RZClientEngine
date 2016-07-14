@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script type="text/javascript" src="../bower_components/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="../dist/RZClientEngine.js"></script>
+
+</head>
+<body>
+<div id="targetEl"></div>
+<button id="bt1">Clique aqui</button>
+</body>
+<script>
+    //log listener
+    rz.helpers.log.registerListener(function(d){
+        if(d.type=="info"){
+            console.log(d.message,d.data);
+        }
+        else if (d.type=="warning"){
+            console.warn(d.message,d.data);
+        }
+        else{
+            console.error(d.message,d.data);
+        }
+    });
+
+
+    //Widget creation
+    var demoWidget = ruteZangada.widget("DemoWidget",["sayHello",{name:"complexDefinitionMethod", description:"complex definition method"}],["helloSaid"],function () {
+        var $this = this;
+        this.initialize = function (params, initialized) {
+            params = params || {};
+            params.message = params.message || "Hello World";
+            initialized(params);
+        };
+
+        this.render = function (target, params,plot) {
+            plot({
+                sender:$this,
+                target: target,
+                data:"<h1>*</h1><br>".replace("*",params.message),
+                method: "html",
+                doAfterRenderAction:function(){
+                    alert("pronto");
+                }
+            });
+
+
+        };
+        this.sayHello = function(){
+            alert("hello");
+            $this.raiseEvent("helloSaid",undefined,$this);
+        }
+    });
+
+    var plotData =  undefined;
+
+    //Widget Execution
+    var instance = ruteZangada.renderWidget("DemoWidget","#targetEl",undefined,function(renderData,eventArgs,callback){
+        eventArgs.cancel = true;
+        plotData = renderData;
+        callback(eventArgs);
+    });
+    instance.on("helloSaid", function (sender,e) {
+        console.warn("said hello from ",sender,"with", e, "args");
+    });
+
+    $("#bt1").click(function(){
+        instance.sayHello();
+    });
+</script>
+</html>

@@ -47,7 +47,7 @@ rz.widgets.helpers = {
         eventData.definition.prototype.on = function (eventName, handler) {
             if(eventData.definition.eventHandlers[eventName] === undefined){
                 eventData.definition.eventHandlers[eventName] = [];
-                console.warn("unknown eventhandler registered: " + eventName);
+                rz.helpers.log.warn("unknown eventhandler registered: " + eventName);
             }
             try {
                 eventData.definition.eventHandlers[eventName].push(handler);
@@ -144,7 +144,7 @@ rz.engine.widgetDefinitionMethod = function (n,m,h, d) {
     }
 };
 
-rz.engine.renderWidgetDefinitionMethod = function (w, t, d) {
+rz.engine.renderWidgetDefinitionMethod = function (w, t, d,p) {
     var Widget = rz.widgets.helpers.widgets[w];
     if (Widget === undefined) {
         throw rz.widgets.helpers.error(2, $rzs.s7, $rzs.s6);
@@ -152,10 +152,38 @@ rz.engine.renderWidgetDefinitionMethod = function (w, t, d) {
 
     var widget = new Widget();
     widget.initialize(d, function (pd) {
-        var ref = {renderData: widget.render(t, pd)};
+        var ref = {renderData: widget.render(t, pd,
+            function(renderData){
+                if(p!==undefined){
+                    var eventArgs = {cancel:false,params:pd,rd:renderData};
+                    p(renderData,eventArgs,function(p){
+                        if(!p.cancel){
+                            rz.engine.plot(p.rd);
+                        }
+                    });
+                }
+                else{
+                    rz.engine.plot(renderData);
+                }
+            }
+        )};
         return ref;
     });
     return widget;
+};
+
+rz.engine.plotContentMethod = function(data){
+    if(data.method=="append"){
+        $(data.target).append(data.data.toString());
+    }
+    else{
+        $(data.target).html(data.data.toString());
+    }
+    if(data.doAfterRenderAction!==undefined) data.doAfterRenderAction();
+    if(data.sender !==undefined){
+        data.sender.raiseEvent("widget-rendered",undefined,data.sender);
+    }
+    //todo raise "afterPlot" event
 };
 
 rz.engine.getWidgetEventHandlersDescriptionsMethod = function (widgetName) {
@@ -181,4 +209,5 @@ ruteZangada.extend("getWidgetEventHandlersDescriptions", rz.engine.getWidgetEven
 ruteZangada.extend("getWidgetEventHandlersDescription", rz.engine.getWidgetEventHandlersDescriptionMethod);
 ruteZangada.extend("getWidgetMethodsDescriptions", rz.engine.getWidgetMethodsDescriptionsMethod);
 ruteZangada.extend("getWidgetMethodsDescription", rz.engine.getWidgetMethodsDescriptionMethod);
+ruteZangada.extend("plot", rz.engine.plotContentMethod);
 
