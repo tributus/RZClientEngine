@@ -169,10 +169,10 @@ rz.helpers.jsonUtils = {
             var lastRef = obj;
             var val = undefined;
             var getPropertyType = function(propString){
-                if(propString.match(/^([a-zA-Z_$ºª]+([0-9]+)?)+$/)) return "sp";
                 if(propString.match(/^([a-zA-Z_$ºª]+([0-9]+)?)+(\[[0-9]+])$/)) return "ua";
                 if(propString.match(/^([a-zA-Z_$ºª]+([0-9]+)?)+(\[])$/)) return "dua";
                 if(propString.match(/^([a-zA-Z_$ºª]+([0-9]+)?)+(\[[0-9]+])+$/)) return "ma";
+                return "sp";
             };
             var isLast = function(){
                 return pos==propArray.length -1;
@@ -180,7 +180,6 @@ rz.helpers.jsonUtils = {
             var transverse = function(item){
                 var propType = getPropertyType(item);
                 var last = isLast();
-                    //ensureProperty(item,propType);
                     if(propType=="sp"){
                         if(last){
                             val = lastRef[item];
@@ -262,10 +261,10 @@ rz.helpers.jsonUtils = {
         var pos = 0;
         var lastRef = obj;
         var getPropertyType = function(propString){
-            if(propString.match(/^([a-zA-Z_$ºª]+([0-9]+)?)+$/)) return "sp";
             if(propString.match(/^([a-zA-Z_$ºª]+([0-9]+)?)+(\[[0-9]+])$/)) return "ua";
             if(propString.match(/^([a-zA-Z_$ºª]+([0-9]+)?)+(\[])$/)) return "dua";
             if(propString.match(/^([a-zA-Z_$ºª]+([0-9]+)?)+(\[[0-9]+])+$/)) return "ma";
+            return "sp";
         };
         var isLast = function(){
             return pos==propArray.length -1;
@@ -420,8 +419,6 @@ rz.helpers.jsonUtils = {
             if(callback) callback(false);
             return false;
         }
-
-
     }
 };
 
