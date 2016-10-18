@@ -252,5 +252,18 @@ rz.helpers.jsonUtils = {
         dfa.start(expression);
         normalize();
         return properties;
+    },
+    isValidPropertyExpression: function(expression,callback){
+        try{
+            var propertytree = this.extractPropertyTree(expression);
+            if(callback) callback(true,propertytree);
+            return true;
+        }
+        catch (ex){
+            if(callback) callback(false);
+            return false;
+        }
+
+
     }
 };
