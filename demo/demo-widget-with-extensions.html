@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script type="text/javascript" src="../bower_components/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="../dist/RZClientEngine.js"></script>
+
+</head>
+<body>
+<div id="targetEl"></div>
+<button id="bt1">Clique aqui</button>
+</body>
+<script>
+    //Widget creation
+    var demoWidget = ruteZangada.widget("DemoWidget",["sayHello",{name:"complexDefinitionMethod", description:"complex definition method"}],["helloSaid"],function () {
+        var $this = this;
+        $this.rendererExtensionType = "rutezangada.demowidgets.renderers";
+        this.initialize = function (params, initialized) {
+            params = params || {};
+            params.message = params.message || "Hello World";
+            initialized(params);
+        };
+
+        this.render = function (target, params) {
+            var renderer = rz.widgets.extensions.getExtension("r2",$this.rendererExtensionType);
+            if(renderer){
+                $(target).html(renderer(params));
+            }
+        };
+        this.sayHello = function(){
+            alert("hello");
+            $this.raiseEvent("helloSaid",undefined,$this);
+        }
+    });
+
+    //widget extensions
+    rz.widgets.extensions.extension("defaultRenderer","rutezangada.demowidgets.renderers",function(args){
+      return '<h1>*</h1><br>'.replace("*",args.message)
+    });
+
+    rz.widgets.extensions.extension("r2","rutezangada.demowidgets.renderers",function(args){
+      return '<h1>RENDERER 2: *</h1><br>'.replace("*",args.message);
+    });
+
+
+
+    //Widget Execution
+    var instance = ruteZangada.renderWidget("DemoWidget","#targetEl");
+    instance.on("helloSaid", function (sender,e) {
+        console.warn("said hello from ",sender,"with", e, "args");
+    });
+
+    $("#bt1").click(function(){
+        instance.sayHello();
+    });
+</script>
+</html>

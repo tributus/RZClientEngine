@@ -1,0 +1,22 @@
+{
+  "version":"0.8.0",
+  "name":"rzclientengine",
+  "description":"RuteZangada Client Engine",
+  "icons":{
+    "small":"rzclientengine-small.png",
+    "normal":"rzclientengine-normal.png",
+    "large":"rzclientengine-large.png"
+  },
+  "developer":{
+    "name":"Anderson Norberto Santos",
+    "url":"https://github.com/tributus"
+  },
+  "categories":["core","system"],
+  "dependencies":{
+    "script":[
+      {"name":"jquery", "version":"2.2.0"}
+    ],
+    "stylesheet":[]
+  },
+  "extensions":[]
+}

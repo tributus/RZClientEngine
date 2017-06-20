@@ -116,6 +116,20 @@ rz.widgets.helpers = {
 
 };
 
+rz.widgets.extensions = {
+    registeredExtensions:{},
+    extension:function(name,type,definition){
+        this.registeredExtensions[type] = this.registeredExtensions[type] || {};
+        this.registeredExtensions[type][name] = definition;
+    },
+    getExtension:function(name,type){
+        return (this.registeredExtensions[type]||{})[name];
+    },
+    getExtensionsByType:function(type){
+        return this.registeredExtensions[type];
+    }
+}
+
 rz.engine.widgetDefinitionMethod = function (n,m,h, d) {
     try {
         var eventData = {

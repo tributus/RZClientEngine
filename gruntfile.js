@@ -87,6 +87,10 @@ module.exports = function (grunt) {
                     },
                     src: 'test/template/SpecRunner.html.ejs',
                     dest: 'test/SpecRunner.html'
+                },
+                manifest:{
+                    src: 'manifest.json',
+                    dest: 'dist/manifest.json'
                 }
             },
             jasmine: {
@@ -106,7 +110,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-jasmine');
 
 
-    grunt.registerTask('default', ['concat:dist','uglify','concat:standalone','concat:test_libs',  'copy:test', 'copy:test_template']);
+    grunt.registerTask('default', ['concat:dist','uglify','concat:standalone','concat:test_libs',  'copy:test', 'copy:test_template','copy:manifest']);
     grunt.registerTask('test', ['jasmine']);
 
 };
