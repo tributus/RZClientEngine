@@ -1,6 +1,6 @@
 {
   "name": "rzclientengine",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "Mecanismo de interface do usuário da plataforma RuteZangada.",
   "main": "index.js",
   "scripts": {
