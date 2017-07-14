@@ -1,6 +1,6 @@
 {
   "version":"0.8.0",
-  "name":"rzclientengine",
+  "name":"rutezangada-clientengine.js",
   "description":"RuteZangada Client Engine",
   "icons":{
     "small":"rzclientengine-small.png",
@@ -12,11 +12,8 @@
     "url":"https://github.com/tributus"
   },
   "categories":["core","system"],
-  "dependencies":{
-    "script":[
-      {"name":"jquery", "version":"2.2.0"}
-    ],
-    "stylesheet":[]
-  },
+  "dependencies":[
+   {"name":"jquery", "version":"2.2.0"}
+  ],
   "extensions":[]
 }

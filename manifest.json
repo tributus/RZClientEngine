@@ -1,6 +1,6 @@
 {
   "version":"0.8.0",
-  "name":"rzclientengine",
+  "name":"rutezangada-clientengine.js",
   "description":"RuteZangada Client Engine",
   "icons":{
     "small":"rzclientengine-small.png",
