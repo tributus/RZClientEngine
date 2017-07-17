@@ -17,7 +17,10 @@ module.exports = function (grunt) {
                     "src/BehaviorsEngine.js",
                     "src/rz.utils.uri.js",
                     "src/plugins/jsonFilterEngine.js",
-                    "src/plugins/DFAMachine.js"
+                    "src/plugins/DFAMachine.js",
+                    "src/rz.httpclient.js",
+                    "src/rz.apiclient.js",
+                    "src/rz.ui.js"
                 ],
                 libs: [
                     "bower_components/jquery/dist/jquery.min.js"

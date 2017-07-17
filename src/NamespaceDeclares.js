@@ -9,3 +9,6 @@ rz.utils            = {};
 rz.helpers          = {};
 rz.behaviors        = {};
 rz.instrumentation  = {};
+rz.httpclient       = {};
+rz.settings         = {};
+rz.ui               = {};
