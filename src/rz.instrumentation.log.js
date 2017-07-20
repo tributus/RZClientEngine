@@ -18,7 +18,9 @@ rz.instrumentation.log = {
             });
         },10);
     },
-
+    debug:function(message,data){
+        this.broadCast(message,data,"debug");
+    },
     info:function(message,data){
         this.broadCast(message,data,"info");
     },

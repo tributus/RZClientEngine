@@ -14,7 +14,7 @@ rz.httpclient.ajax = function (method, url, data, success, fail, sudouser, sudok
             }
             else {
                 setTimeout(function () {
-                    rz.ui.sudo(d, method, url, data, success, fail);
+                    $RZ_APP.ui.sudo(d, method, url, data, success, fail);
                 }, 1000);
             }
         },
@@ -24,7 +24,7 @@ rz.httpclient.ajax = function (method, url, data, success, fail, sudouser, sudok
             }
             else {
                 var message = "Erro consultando o serviço";
-                rz.ui.alert(message);
+                $RZ_APP.ui.alert(message);
                 console.warn(message, e);
             }
         },
@@ -65,7 +65,7 @@ rz.httpclient.postX = function (url, data, success, fail) {
                     fail(e);
                 }
                 else {
-                    rz.ui.alert(mensagem);
+                    $RZ_APP.ui.alert(mensagem);
                 }
             }
 
@@ -85,7 +85,7 @@ rz.httpclient.delete = function (url, data, success, fail) {
 
 rz.httpclient.buildApiUrl = function(url,params,apiVersion){
     apiVersion = apiVersion || "1";
-    var baseUrl = rz.settings.apiBaseUrl.replace("{version}",apiVersion);
+    var baseUrl = $RZ_APP.Settings.apiBaseUrl.replace("{version}",apiVersion);
     if(params){
         var keys = url.match(/\{[a-zA-Z]+}/g);
         if(keys){
@@ -124,5 +124,5 @@ rz.httpclient.buildUrl = function (url, params) {
 };
 
 rz.httpclient.setBaseApiUrl = function(value){
-    rz.settings.apiBaseUrl = value;
+    $RZ_APP.Settings.apiBaseUrl = value;
 }

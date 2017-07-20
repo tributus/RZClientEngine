@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script type="text/javascript" src="../bower_components/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="../dist/RZClientEngine.js"></script>
+
+</head>
+<body>
+<div id="targetEl"></div>
+<button id="bt1">Clique aqui</button>
+</body>
+<script>
+  //presets or task pallete
+  var presets = {
+    sayHello: function(container,done){
+        console.log("Hello");
+        done();
+    },
+    sayGoodBye: function(container,done){
+        console.log("Good by");
+        done();
+    },
+    setContext: function(container,done,signal){
+        container.setVar("Foo","BA");
+        container.setVar("Obj",{v1:"x",v2:"y"});
+        signal("context-changed",{},function(cbdata){
+            console.log("SIGNAL CALLBACK")
+        });
+        done();
+    },
+    getContext: function(container,done){
+        console.log("The value of FOO is ",container.getVar("Foo"));
+        done();
+    },
+    SomethingElse:function(container,done){
+        console.log("Something else");
+        done();
+    },
+    asyncTask:function(container,done){
+        setTimeout(function(){
+            var x = container.getVar("x");
+            console.log("Executed after 5s");
+            done();
+        },5000);
+        console.warn("please, wait for 5s...");
+    }
+}
+
+var setupEventHandlers = function(pip1){
+    pip1.on("task-finished",function(s,e){
+        console.log("TASK FINISHED",e);
+        s.detachEvent("task-finished",this);
+    });
+
+    pip1.on("context-changed",function(s,e,c){
+        console.log("Received SIGNAL context-changed with data",e);
+        if(c){
+            c("DONE");
+        }
+    });
+    pip1.on("workflow-finished",function(){
+        console.error("Workflow Finished");
+    })
+}
+</script>
+<script>
+  var pip1 = new rz.plugins.Pipeline();
+  pip1.task("say-hello", presets.sayHello);
+  pip1.task("do-something-else",presets.SomethingElse)
+  pip1.task("async-task",presets.asyncTask);
+  pip1.task("say-good-bye",presets.sayGoodBye);
+  pip1.task("set-context",presets.setContext);
+  pip1.task("get-context",presets.getContext);
+  setupEventHandlers(pip1);
+      
+  //taskrunner mode
+  pip1.pipeline("default",["say-hello","set-context","get-context","do-something-else","async-task","say-good-bye"]);
+  
+  $("#bt1").click(function(){
+    alert("see the results on console");
+    pip1.setVar("x","123");
+    pip1.start("default");
+    var r = pip1.getVar("Obj");
+    console.log(r);
+    
+  });
+</script>
+</html>

@@ -138,17 +138,18 @@ function generateRandomID(size) {
 /**
  * Created by anderson.santos on 08/01/2016.
  */
-var rz              = {};
-rz.engine           = {};
-rz.widgets          = {};
-rz.plugins          = {};
-rz.utils            = {};
-rz.helpers          = {};
-rz.behaviors        = {};
-rz.instrumentation  = {};
-rz.httpclient       = {};
-rz.settings         = {};
-rz.ui               = {};
+var rz = rz || {};
+var $RZ_APP  = $RZ_APP || {};
+rz.engine = {};
+rz.widgets = {};
+rz.plugins = {};
+rz.utils = {};
+rz.helpers = {};
+rz.behaviors = {};
+rz.instrumentation = {};
+rz.httpclient = {};
+rz.settings = {};
+$RZ_APP.ui = {};
 /**
  * Created by anderson.santos on 08/06/2016.
  */
@@ -453,7 +454,9 @@ rz.instrumentation.log = {
             });
         },10);
     },
-
+    debug:function(message,data){
+        this.broadCast(message,data,"debug");
+    },
     info:function(message,data){
         this.broadCast(message,data,"info");
     },
@@ -1056,6 +1059,164 @@ rz.plugins.DFAMachine = function (onNodeEnter) {
 
     };
 };
+rz.plugins.Pipeline = function(){
+  var tasks={};
+  var context={};
+  var workflows={};
+  var executionLog=[];
+  var eventHandlers={
+    "task-started":[],
+    "task-finished":[],
+    "workflow-started":[],
+    "workflow-finished":[],
+    "workflow-stoped":[]
+  };
+  var signals={};
+  var $this = this;
+  
+  var executeTask = function(workFlow,step,previousStep){
+    var transition = workFlow[step];
+
+    rz.instrumentation.log.debug("Executing transition: " + transition);
+    if(transition && typeof transition=="string"){
+      //implicit transition
+      var task = tasks[transition];
+      if(task){
+        raiseEvent("task-started",{context:context,workflow:workFlow,step:step,previousStep:previousStep});
+        task($this,stepDone,signalHandler,previousStep);
+      }
+      else{
+        throw "Task \"*\" not found".replace("*",transition);
+      }
+    }
+    else{
+      throw "NOT IMPLEMENTED";
+    }
+  }
+  var registerTaskExecutionLog = function(data){
+    executionLog.push(data);
+  }
+  
+  /**
+   * handle stepDone actions
+   * @param {int} status exit code of execution (0 to indicate success or an arbitrary error code)
+   * @param {*} stepData additional data produced by step execution
+   */
+  var stepDone = function(status,stepData){
+    var workflow = workflows[context.runningWorkflowName];
+    var previousStep = {
+      taskName: workflow[context.currentStep],
+      step: context.currentStep,
+      status: status || 0,
+      stepData:stepData
+    }
+    registerTaskExecutionLog(previousStep);
+    raiseEvent("task-finished",previousStep);
+    if(status!=255){
+      context.currentStep++;
+      if(context.currentStep < workflow.length){
+        setTimeout(function(){
+          return executeTask(workflow,context.currentStep,previousStep);
+        },1);
+        
+      }
+      if(context.currentStep==workflow.length && !context.isWorkflowFinished){
+        context.isWorkflowFinished=true;
+        finishWorkflowExecution();
+      }
+    }
+    else{
+      raiseEvent("workflow-stoped",{status:255,context:context});
+      finishWorkflowExecution();
+    }
+    
+  }
+  var finishWorkflowExecution = function(){
+    raiseEvent("workflow-finished",{context:context});
+  }
+  this.task = function(taskName,handler){
+    tasks[taskName]=handler;
+   }
+  this.pipeline = function(workflowName,workflowHandler){
+    workflows[workflowName]=workflowHandler
+  }
+  //workflow data handling
+  this.setVar = function(varName,value){
+    context[varName]=value;
+  }
+  this.getVar = function(varName){
+    return context[varName];
+  }
+  this.getExecutionLog = function(){
+    return executionLog;
+  }
+  //workflow execution
+  reset = function(){
+    context.currentStep=0;
+    executionLog=[];
+    context.isWorkflowFinished=false;
+  }
+  
+  /**
+   * Starts a predefined workflow
+   * @param {*} workflow name ("default" if not defined)
+   */
+  this.start = function(workflowName){
+    workflowName = workflowName || "default";
+    var workflow = workflows[workflowName];
+    if(workflow){
+      context.runningWorkflowName=workflowName;
+      reset();
+      raiseEvent("workflow-started",{context:context});
+      executeTask(workflow,0);
+    }
+    else{
+      throw "workflow not found: " + workflowName;
+    }
+  }
+  
+  //event handling
+  this.on = function(eventName,eventHandler){
+    if(!eventHandlers[eventName]){
+      if(!signals[eventName]){
+        signals[eventName] = [];
+      }
+      signals[eventName].push(eventHandler);
+    }
+    else{
+      eventHandlers[eventName].push(eventHandler);
+    }    
+  }
+  this.detachEvent = function(eventName,eventHandler){
+    if(eventHandlers[eventName]){
+      var index = eventHandlers[eventName].indexOf(eventHandler);
+      eventHandlers[eventName].splice(index, 1);
+    }
+    
+  }
+  var raiseEvent = function(eventName,eventData){
+    var handlerList = eventHandlers[eventName];
+    if(handlerList){
+      handlerList.forEach(function(it){
+        it($this,eventData);
+      });
+    }
+  }
+  var signalHandler = function(signalName,signalData,callback){
+    if(!eventHandlers[signalName]){
+      var handlerList = signals[signalName];
+      if(handlerList){
+        handlerList.forEach(function(it){
+          it($this,signalData,callback);
+        });
+      }
+    }
+    else{
+      throw "invalid signal \"" + signalName + "\". Use another signal name";
+    }
+  }
+}
+
 rz.httpclient.ajax = function (method, url, data, success, fail, sudouser, sudokey) {
     $.ajax({
         type: method,
@@ -1072,7 +1233,7 @@ rz.httpclient.ajax = function (method, url, data, success, fail, sudouser, sudok
             }
             else {
                 setTimeout(function () {
-                    rz.ui.sudo(d, method, url, data, success, fail);
+                    $RZ_APP.ui.sudo(d, method, url, data, success, fail);
                 }, 1000);
             }
         },
@@ -1082,7 +1243,7 @@ rz.httpclient.ajax = function (method, url, data, success, fail, sudouser, sudok
             }
             else {
                 var message = "Erro consultando o serviço";
-                rz.ui.alert(message);
+                $RZ_APP.ui.alert(message);
                 console.warn(message, e);
             }
         },
@@ -1123,7 +1284,7 @@ rz.httpclient.postX = function (url, data, success, fail) {
                     fail(e);
                 }
                 else {
-                    rz.ui.alert(mensagem);
+                    $RZ_APP.ui.alert(mensagem);
                 }
             }
 
@@ -1143,7 +1304,7 @@ rz.httpclient.delete = function (url, data, success, fail) {
 
 rz.httpclient.buildApiUrl = function(url,params,apiVersion){
     apiVersion = apiVersion || "1";
-    var baseUrl = rz.settings.apiBaseUrl.replace("{version}",apiVersion);
+    var baseUrl = $RZ_APP.Settings.apiBaseUrl.replace("{version}",apiVersion);
     if(params){
         var keys = url.match(/\{[a-zA-Z]+}/g);
         if(keys){
@@ -1182,7 +1343,7 @@ rz.httpclient.buildUrl = function (url, params) {
 };
 
 rz.httpclient.setBaseApiUrl = function(value){
-    rz.settings.apiBaseUrl = value;
+    $RZ_APP.Settings.apiBaseUrl = value;
 }
 rz.apiEndpoints = {}
 rz.httpclient.registerApiEndpoint = function(name,handler){
@@ -1230,30 +1391,30 @@ rz.httpclient.registerApiEndpoint("api test",{
   method:"GET",
   external:false
 });
-rz.ui.success = function(){
+$RZ_APP.ui.success = function(){
   console.warn("NOT IMPLEMENTED YET. THIS METHOD MUST BE OVERRIDEN");
 }
 
-rz.ui.info = function(){
+$RZ_APP.ui.info = function(){
   console.warn("NOT IMPLEMENTED YET. THIS METHOD MUST BE OVERRIDEN");
 }
 
-rz.ui.error = function(){
+$RZ_APP.ui.error = function(){
   console.warn("NOT IMPLEMENTED YET. THIS METHOD MUST BE OVERRIDEN");
 }
 
-rz.ui.alert = function(){
+$RZ_APP.ui.alert = function(){
   console.warn("NOT IMPLEMENTED YET. THIS METHOD MUST BE OVERRIDEN");
 }
 
-rz.ui.sudo = function(){
+$RZ_APP.ui.sudo = function(){
   console.warn("NOT IMPLEMENTED YET. THIS METHOD MUST BE OVERRIDEN");
 }
 
-rz.ui.modal = function(){
+$RZ_APP.ui.modal = function(){
   console.warn("NOT IMPLEMENTED YET. THIS METHOD MUST BE OVERRIDEN");
 }
 
-rz.ui.notify = function(){
+$RZ_APP.ui.notify = function(){
   console.warn("NOT IMPLEMENTED YET. THIS METHOD MUST BE OVERRIDEN");
 }
