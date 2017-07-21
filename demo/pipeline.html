@@ -14,15 +14,15 @@
 <script>
   //presets or task pallete
   var presets = {
-    sayHello: function(container,done){
+    sayHello: function(container,done,options){
         console.log("Hello");
         done();
     },
-    sayGoodBye: function(container,done){
-        console.log("Good by");
+    sayGoodBye: function(container,done,options){
+        console.log("Good by ", options.name);
         done();
     },
-    setContext: function(container,done,signal){
+    setContext: function(container,done,options,signal){
         container.setVar("Foo","BA");
         container.setVar("Obj",{v1:"x",v2:"y"});
         signal("context-changed",{},function(cbdata){
@@ -30,15 +30,15 @@
         });
         done();
     },
-    getContext: function(container,done){
+    getContext: function(container,done,options){
         console.log("The value of FOO is ",container.getVar("Foo"));
         done();
     },
-    SomethingElse:function(container,done){
+    SomethingElse:function(container,done,options){
         console.log("Something else");
         done();
     },
-    asyncTask:function(container,done){
+    asyncTask:function(container,done,options){
         setTimeout(function(){
             var x = container.getVar("x");
             console.log("Executed after 5s");
@@ -70,7 +70,7 @@ var setupEventHandlers = function(pip1){
   pip1.task("say-hello", presets.sayHello);
   pip1.task("do-something-else",presets.SomethingElse)
   pip1.task("async-task",presets.asyncTask);
-  pip1.task("say-good-bye",presets.sayGoodBye);
+  pip1.task("say-good-bye",presets.sayGoodBye,{name:'Anderson'});
   pip1.task("set-context",presets.setContext);
   pip1.task("get-context",presets.getContext);
   setupEventHandlers(pip1);

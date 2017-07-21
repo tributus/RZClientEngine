@@ -1083,7 +1083,7 @@ rz.plugins.Pipeline = function(){
       var task = tasks[transition];
       if(task){
         raiseEvent("task-started",{context:context,workflow:workFlow,step:step,previousStep:previousStep});
-        task($this,stepDone,signalHandler,previousStep);
+        task.handler($this,stepDone,task.options,signalHandler,previousStep);
       }
       else{
         throw "Task \"*\" not found".replace("*",transition);
@@ -1134,8 +1134,8 @@ rz.plugins.Pipeline = function(){
   var finishWorkflowExecution = function(){
     raiseEvent("workflow-finished",{context:context});
   }
-  this.task = function(taskName,handler){
-    tasks[taskName]=handler;
+  this.task = function(taskName,handler,options){
+    tasks[taskName]={handler: handler, options:options};
    }
   this.pipeline = function(workflowName,workflowHandler){
     workflows[workflowName]=workflowHandler
